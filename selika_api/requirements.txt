@@ -1,0 +1,16 @@
+Django==3.1.7
+markdown
+django-filter
+psycopg2
+django-cors-headers
+django-extensions
+Pillow
+django-ckeditor
+djangorestframework
+django-debug-toolbar
+django-anymail[mailjet]
+django-mathfilters
+paramiko
+XlsxWriter
+djangorestframework-jwt
+djangorestframework_simplejwt==4.4.0

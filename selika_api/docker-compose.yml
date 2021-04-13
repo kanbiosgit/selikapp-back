@@ -1,0 +1,20 @@
+version: "3"
+services:
+  dbselika:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: selika
+      POSTGRES_DB: selika
+  selika:
+    image: python:3
+    build: './'
+    command: ["./docker-entrypoint.sh"]
+    volumes:
+      - ./:/code
+    ports:
+      - "8002:8000"
+    depends_on:
+      - dbselika
+    tty: true
