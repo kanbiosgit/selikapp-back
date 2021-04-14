@@ -3,10 +3,47 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from ..models import Route, Negociator, Map
-from ..serializers.income import RouteIncomeSerializer
+from ..serializers.income import RouteIncomeSerializer, RouteFromMapIncomeSerializer
 from ..serializers.outcome import RouteOutcomeSerializer
 from rest_framework import status
 from django.http import Http404
+from django.shortcuts import get_object_or_404
+
+
+
+def get_route_from_map(pk, map):
+    try:
+        return Route.objects.get(id=pk, map=map)
+    except Route.DoesNotExist:
+        raise Http404
+
+class RouteFromMapList(APIView):
+    """
+    Api view for retrieve route from map
+    """
+
+    def get(self, request, format=None):
+        serializerIn = RouteFromMapIncomeSerializer(data=request.data)
+        if serializerIn.is_valid():
+            print('user', request.user)
+            negociator = Negociator.objects.get(user=request.user)
+            route = Route.objects.all().filter(map=serializerIn.data['map'])
+            print('route', route)
+            serializerOut = RouteOutcomeSerializer(route, many=True)
+            return Response(serializerOut.data)
+
+
+class RouteFromMapDetail(APIView):
+    """
+    Api view for retrieve route from map
+    """
+
+    def get(self, request, pk, format=None):
+        serializerIn = RouteFromMapIncomeSerializer(data=request.data)
+        if serializerIn.is_valid():
+            route = get_route_from_map(pk, serializerIn.data['map'])
+            serializerOut = RouteOutcomeSerializer(route)
+            return Response(serializerOut.data)
 
 
 class RouteList(APIView):

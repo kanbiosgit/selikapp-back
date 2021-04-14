@@ -18,3 +18,8 @@ class NegociatorIncomeSerializer(serializers.ModelSerializer) :
     class Meta :
         model = Negociator
         fields = ['color', 'lastname', 'firstname']
+
+class RouteFromMapIncomeSerializer(serializers.ModelSerializer) :
+    class Meta:
+        model = Route
+        fields = ['map']

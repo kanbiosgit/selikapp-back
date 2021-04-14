@@ -8,13 +8,16 @@ class MapOutcomeSerializer(serializers.ModelSerializer) :
         fields = ['id', 'archived']
 
 
-class RouteOutcomeSerializer(serializers.ModelSerializer) :
-    class Meta:
-        model = Route
-        fields = ['startLat', 'startLng', 'endLat', 'endLng', 'id']
-
-
 class NegociatorOutcomeSerializer(serializers.ModelSerializer) :
     class Meta:
         model = Negociator
         fields = ['color', 'lastname', 'firstname', 'id']
+
+
+class RouteOutcomeSerializer(serializers.ModelSerializer):
+    map = MapOutcomeSerializer(required=False)
+    negociator = NegociatorOutcomeSerializer(required=False)
+
+    class Meta:
+        model = Route
+        fields = ['startLat', 'startLng', 'endLat', 'endLng', 'id', 'negociator', 'map']
