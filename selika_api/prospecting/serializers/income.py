@@ -11,7 +11,7 @@ class MapIncomeSerializer(serializers.ModelSerializer) :
 class RouteIncomeSerializer(serializers.ModelSerializer) :
     class Meta :
         model = Route
-        fields = ['negociator', 'map', 'startLat', 'startLng', 'endLat', 'endLng']
+        fields = ['map', 'startLat', 'startLng', 'endLat', 'endLng']
 
 
 class NegociatorIncomeSerializer(serializers.ModelSerializer) :

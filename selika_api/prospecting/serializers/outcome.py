@@ -17,4 +17,4 @@ class RouteOutcomeSerializer(serializers.ModelSerializer) :
 class NegociatorOutcomeSerializer(serializers.ModelSerializer) :
     class Meta:
         model = Negociator
-        fields = ['color', 'user', 'lastname', 'firstname', 'id']
+        fields = ['color', 'lastname', 'firstname', 'id']
