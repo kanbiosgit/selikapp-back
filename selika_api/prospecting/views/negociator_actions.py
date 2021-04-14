@@ -2,8 +2,8 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView,
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Negociator, Route, Map
-from .serializers.income import MapIncomeSerializer, NegociatorIncomeSerializer, RouteIncomeSerializer
+from ..models import Negociator, Route, Map
+from ..serializers.income import MapIncomeSerializer, NegociatorIncomeSerializer, RouteIncomeSerializer
 from userprofile.models import UserCustomGroup
 from user.models import AAUser
 
