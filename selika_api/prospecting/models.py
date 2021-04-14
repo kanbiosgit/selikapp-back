@@ -23,7 +23,8 @@ class Map(models.Model) :
     verbose_name = "Map"
     verbose_name_plural = "Maps"
 
-class Route(models.Model) :
+
+class Route(models.Model):
   negociator = models.ForeignKey(
     Negociator,
     on_delete=CASCADE

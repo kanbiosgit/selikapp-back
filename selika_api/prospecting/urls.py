@@ -1,5 +1,9 @@
 from django.urls import path
-from .views import ListMapAPIView, ListRoutesAPIView, ListNegociatorAPIView, GetMapAPIView, GetRouteAPIView, GetNegociatorAPIView, UpdateNegociatorAPIView, UpdateRouteAPIView, UpdateMapAPIView, DeleteNegociatorAPIView, DeleteRouteAPIView, DeleteMapAPIView, CreateNegociatorAPIView, CreateMapAPIView, CreateRouteAPIView
+from .views.negociator_actions import ListNegociatorAPIView, GetNegociatorAPIView, UpdateNegociatorAPIView, \
+    DeleteNegociatorAPIView, CreateNegociatorAPIView
+from .views.crud_map import ListMapAPIView, GetMapAPIView, UpdateMapAPIView, DeleteMapAPIView, CreateMapAPIView
+from .views.crud_road import ListRoutesAPIView, GetRouteAPIView, UpdateRouteAPIView, DeleteRouteAPIView, \
+    CreateRouteAPIView
 
 urlpatterns = [
     path('negociator/detail', ListNegociatorAPIView.as_view()),

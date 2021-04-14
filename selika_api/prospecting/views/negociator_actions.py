@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView, CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -7,39 +6,6 @@ from .models import Negociator, Route, Map
 from .serializers.income import MapIncomeSerializer, NegociatorIncomeSerializer, RouteIncomeSerializer
 from userprofile.models import UserCustomGroup
 from user.models import AAUser
-
-# Create your views here.
-
-
-class ListMapAPIView(ListAPIView):
-    permission_classes = (IsAuthenticated,)
-    queryset = Map.objects.all()
-    serializer_class = MapIncomeSerializer
-
-
-class GetMapAPIView(RetrieveAPIView):
-    permission_classes = (IsAuthenticated,)
-    queryset = Map.objects.all()
-    serializer_class = MapIncomeSerializer
-
-
-class UpdateMapAPIView(UpdateAPIView):
-    permission_classes = (IsAuthenticated,)
-    queryset = Map.objects.all()
-    serializer_class = MapIncomeSerializer
-
-
-class DeleteMapAPIView(DestroyAPIView):
-    permission_classes = (IsAuthenticated,)
-    queryset = Map.objects.all()
-    serializer_class = MapIncomeSerializer
-
-
-class CreateMapAPIView(CreateAPIView):
-    permission_classes = (IsAuthenticated,)
-    queryset = Map.objects.all()
-    serializer_class = MapIncomeSerializer
-
 
 class ListNegociatorAPIView(ListAPIView):
     permission_classes = (IsAuthenticated,)
@@ -91,33 +57,3 @@ class CreateNegociatorAPIView(CreateAPIView):
                 'error': str(e)
             }
         return Response(response, status=statusCode)
-
-
-class ListRoutesAPIView(ListAPIView):
-    permission_classes = (IsAuthenticated,)
-    queryset = Route.objects.all()
-    serializer_class = RouteIncomeSerializer
-
-
-class GetRouteAPIView(RetrieveAPIView):
-    permission_classes = (IsAuthenticated,)
-    queryset = Route.objects.all()
-    serializer_class = RouteIncomeSerializer
-
-
-class UpdateRouteAPIView(UpdateAPIView):
-    permission_classes = (IsAuthenticated,)
-    queryset = Route.objects.all()
-    serializer_class = RouteIncomeSerializer
-
-
-class DeleteRouteAPIView(DestroyAPIView):
-    permission_classes = (IsAuthenticated,)
-    queryset = Route.objects.all()
-    serializer_class = RouteIncomeSerializer
-
-
-class CreateRouteAPIView(CreateAPIView):
-    permission_classes = (IsAuthenticated,)
-    queryset = Route.objects.all()
-    serializer_class = RouteIncomeSerializer
