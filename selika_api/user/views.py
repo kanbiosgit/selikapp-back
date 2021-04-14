@@ -1,4 +1,3 @@
-from userprofile.models import UserProfile
 from user.models import AAUser
 from rest_framework import status
 from rest_framework.response import Response
@@ -9,7 +8,6 @@ from django.contrib.auth import authenticate
 from .models import AAUser
 from django.contrib.auth.models import update_last_login
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.permissions import IsAuthenticated
 
 
 class UserLoginView(RetrieveAPIView):
@@ -17,7 +15,6 @@ class UserLoginView(RetrieveAPIView):
     serializer_class = UserLoginSerializer
 
     def post(self, request):
-        print('request data', request.data)
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         email = serializer.data['email']
