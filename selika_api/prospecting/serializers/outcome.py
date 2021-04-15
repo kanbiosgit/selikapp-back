@@ -5,7 +5,7 @@ from ..models import Map, Negociator, Route
 class MapOutcomeSerializer(serializers.ModelSerializer) :
     class Meta:
         model = Map
-        fields = ['id', 'archived']
+        fields = ['id', 'archived', 'creation']
 
 
 class NegociatorOutcomeSerializer(serializers.ModelSerializer) :

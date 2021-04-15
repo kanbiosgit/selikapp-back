@@ -10,8 +10,29 @@ from user.models import AAUser
 from rest_framework.views import APIView
 from rest_framework import status
 from django.http import Http404
+from django.shortcuts import get_object_or_404
 
 
+
+class NegociatorHimself(APIView):
+    """
+    in the other Negociator class you need to be an admin to modify a negociator, here the negociator modify it's own
+    model
+    """
+
+    def get(self, request, pk, format=None):
+        negociator = get_object_or_404(Negociator, user=request.user)
+        serializer = NegociatorOutcomeSerializer(negociator)
+        return Response(serializer.data)
+
+    def put(self, request, pk, format=None):
+        negociator = get_object_or_404(Negociator, user=request.user)
+        serializer = NegociatorIncomeSerializer(negociator, data=request.data)
+        if serializer.is_valid():
+            negociator = serializer.save()
+            serializerOut = NegociatorOutcomeSerializer(negociator)
+            return Response(serializerOut.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class NegociatorList(APIView):
     """

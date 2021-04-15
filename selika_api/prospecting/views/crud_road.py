@@ -25,10 +25,8 @@ class RouteFromMapList(APIView):
     def get(self, request, format=None):
         serializerIn = RouteFromMapIncomeSerializer(data=request.data)
         if serializerIn.is_valid():
-            print('user', request.user)
-            negociator = Negociator.objects.get(user=request.user)
-            route = Route.objects.all().filter(map=serializerIn.data['map'])
-            print('route', route)
+            negociator = get_object_or_404(Negociator, user=request.user)
+            route = Route.objects.all().filter(map=serializerIn.data['map'], negociator=negociator)
             serializerOut = RouteOutcomeSerializer(route, many=True)
             return Response(serializerOut.data)
 
