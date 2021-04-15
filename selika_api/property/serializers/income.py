@@ -5,3 +5,9 @@ class PropertyIncomeSerializer(serializers.ModelSerializer) :
   class Meta :
     model = Property
     fields = ['name', 'phone', 'address', 'price', 'ground', 'comment', 'ref', 'prospecting', 'negociator']
+
+
+class PropertySearchIncomeSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Property
+    fields = ['name', 'phone', 'address']
