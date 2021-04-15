@@ -40,7 +40,7 @@ class NegociatorList(APIView):
     """
     def get(self, request, format=None):
         userprofile = UserProfile.objects.get(user=request.user)
-        if userprofile.custom_group.label is 'Admin':
+        if userprofile.custom_group.label == 'Admin':
             negociator = Negociator.objects.all()
             serializer = NegociatorOutcomeSerializer(negociator, many=True)
             return Response(serializer.data)
@@ -78,7 +78,7 @@ class NegociatorDetail(APIView):
 
     def get(self, request, pk, format=None):
         userprofile = UserProfile.objects.get(user=request.user)
-        if userprofile.custom_group.label is 'Admin':
+        if userprofile.custom_group.label == 'Admin':
             negociator = self.get_object(pk)
             serializer = NegociatorOutcomeSerializer(negociator)
             return Response(serializer.data)
@@ -90,7 +90,7 @@ class NegociatorDetail(APIView):
 
     def put(self, request, pk, format=None):
         userprofile = UserProfile.objects.get(user=request.user)
-        if userprofile.custom_group.label is 'Admin':
+        if userprofile.custom_group.label == 'Admin':
             negociator = self.get_object(pk)
             serializer = NegociatorIncomeSerializer(negociator, data=request.data)
             if serializer.is_valid():
@@ -106,7 +106,8 @@ class NegociatorDetail(APIView):
 
     def delete(self, request, pk, format=None):
         userprofile = UserProfile.objects.get(user=request.user)
-        if userprofile.custom_group.label is 'Admin':
+        print('userprofile', userprofile.custom_group.label)
+        if userprofile.custom_group.label == 'Admin':
             negociator = self.get_object(pk)
             negociator.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)

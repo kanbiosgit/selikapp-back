@@ -9,8 +9,8 @@ class UserCustomGroupOutcomeSerializer(serializers.ModelSerializer):
 
 
 class UserProfileOutcomeSerializer(serializers.ModelSerializer):
-    customGroup = UserCustomGroupOutcomeSerializer(required=False)
+    custom_group = UserCustomGroupOutcomeSerializer(required=False)
 
     class Meta:
         model = UserProfile
-        fields = ['lastname', 'firstname', 'customGroup', 'id']
+        fields = ['lastname', 'firstname', 'custom_group', 'id']

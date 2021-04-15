@@ -21,7 +21,7 @@ class AdminPropertySearch(APIView):
     def get(self, request):
         serializer = PropertySearchIncomeSerializer(request.data)
         userprofile = UserProfile.objects.get(user=request.user)
-        if userprofile.custom_group.label is 'Admin':
+        if userprofile.custom_group.label == 'Admin':
             properties = Property.objects.all().filter(phone=serializer.data['phone'],
                                                        address__iexact=serializer.data['address'], name__iexact=serializer.data['name'])
             serializerOut = PropertyOutcomeSerializer(properties)
