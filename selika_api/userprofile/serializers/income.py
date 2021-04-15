@@ -1,9 +1,16 @@
 from rest_framework import serializers
+from ..models import UserProfile, UserCustomGroup
 
-class UserCustomGroupIncomeSerializer(serializers.Serializer):
-  label = serializers.CharField(max_length=255)
 
-class UserProfileIncomeSerializer(serializers.Serializer):
-    firstname = serializers.CharField(max_length=255)
-    lastname = serializers.CharField(max_length=255)
+class UserCustomGroupIncomeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserCustomGroup
+        fields = ['label']
+
+
+class UserProfileIncomeSerializer(serializers.ModelSerializer):
     customGroup = UserCustomGroupIncomeSerializer(required=False)
+
+    class Meta:
+        model = UserProfile
+        fields = ['lastname', 'firstname', 'customGroup']

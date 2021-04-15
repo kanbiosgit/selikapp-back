@@ -1,64 +1,53 @@
-from django.shortcuts import render
-from rest_framework.generics import RetrieveAPIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView, CreateAPIView
-from rest_framework import status
-from rest_framework.response import Response
 from .models import UserProfile
 from .serializers.income import UserProfileIncomeSerializer
-
-# Create your views here.
-
-class UserProfileView(RetrieveAPIView) :
-  permission_classes = (IsAuthenticated,)
-  
-  def get(self, request):
-    try :
-      user = UserProfile.objects.get(user=request.user)
-      print('user', user)
-      statusCode = status.HTTP_200_OK
-      response = {
-        'sucess': True,
-        'statusCode': statusCode,
-        'message': 'User profile fetched successfully with id : ' + str(user.id),
-      }
-
-    except Exception as e:
-      statusCode = status.HTTP_400_BAD_REQUEST
-      response = {
-          'success': False,
-          'statusCode': statusCode,
-          'message': 'User does not exists',
-          'error': str(e)
-          }
-    return Response(response, status=statusCode)
+from .serializers.outcome import UserProfileOutcomeSerializer
+from django.http import Http404
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
 
-class ListUserProfileAPIView(ListAPIView):
-    permission_classes = (IsAuthenticated,)
-    queryset = UserProfile.objects.all()
-    serializer_class = UserProfileIncomeSerializer
+class UserProfileList(APIView):
+    """
+    List all userprofiles, or create a new userprofile.
+    """
+    def get(self, request, format=None):
+        userprofiles = UserProfile.objects.all()
+        serializer = UserProfileOutcomeSerializer(userprofiles, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = UserProfileIncomeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class GetUserProfileAPIView(RetrieveAPIView):
-    permission_classes = (IsAuthenticated,)
-    queryset = UserProfile.objects.all()
-    serializer_class = UserProfileIncomeSerializer
+class UserProfileDetail(APIView):
+    """
+    Retrieve, update or delete a userprofile instance.
+    """
+    def get_object(self, pk):
+        try:
+            return UserProfile.objects.get(pk=pk)
+        except UserProfile.DoesNotExist:
+            raise Http404
 
+    def get(self, request, pk, format=None):
+        userprofile = self.get_object(pk)
+        serializer = UserProfileOutcomeSerializer(userprofile)
+        return Response(serializer.data)
 
-class UpdateUserProfileAPIView(UpdateAPIView):
-    permission_classes = (IsAuthenticated,)
-    queryset = UserProfile.objects.all()
-    serializer_class = UserProfileIncomeSerializer
+    def put(self, request, pk, format=None):
+        userprofile = self.get_object(pk)
+        serializer = UserProfileIncomeSerializer(userprofile, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-class DeleteUserProfileAPIView(DestroyAPIView):
-    permission_classes = (IsAuthenticated,)
-    queryset = UserProfile.objects.all()
-    serializer_class = UserProfileIncomeSerializer
-
-
-class CreateUserProfileAPIView(CreateAPIView):
-    permission_classes = (IsAuthenticated,)
-    queryset = UserProfile.objects.all()
-    serializer_class = UserProfileIncomeSerializer
+    def delete(self, request, pk, format=None):
+        userprofile = self.get_object(pk)
+        userprofile.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
