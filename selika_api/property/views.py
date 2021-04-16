@@ -13,6 +13,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from prospecting.models import Negociator
 from userprofile.models import UserProfile
+from django.db.models import Q
 
 
 # Create your views here.
@@ -22,9 +23,9 @@ class AdminPropertySearch(APIView):
         serializer = PropertySearchIncomeSerializer(request.data)
         userprofile = UserProfile.objects.get(user=request.user)
         if userprofile.custom_group.label == 'Admin':
-            properties = Property.objects.all().filter(phone=serializer.data['phone'],
-                                                       address__iexact=serializer.data['address'], name__iexact=serializer.data['name'])
-            serializerOut = PropertyOutcomeSerializer(properties)
+            print('serializer.data', serializer.data)
+            properties = Property.objects.filter(Q(phone=serializer.data['phone']) | Q(address__iexact=serializer.data['address']) | Q(name__iexact=serializer.data['name']))
+            serializerOut = PropertyOutcomeSerializer(properties, many=True)
             return Response(serializerOut.data)
         response = {
             'success': False,
