@@ -1,13 +1,17 @@
+from rest_framework.views import APIView
 from user.models import AAUser
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from .serializers.income import UserLoginSerializer
+from .serializers.outcome import UserOutcomeSerializer
 from rest_framework.generics import RetrieveAPIView
 from django.contrib.auth import authenticate
 from .models import AAUser
 from django.contrib.auth.models import update_last_login
 from rest_framework_simplejwt.tokens import RefreshToken
+from userprofile.models import UserProfile
+from userprofile.serializers.outcome import UserProfileOutcomeSerializer
 
 
 class UserLoginView(RetrieveAPIView):
@@ -47,3 +51,9 @@ class UserLoginView(RetrieveAPIView):
         status_code = status.HTTP_200_OK
 
         return Response(response, status=status_code)
+
+class RetrieveUser(APIView):
+    def get(self, request):
+      userprofile = UserProfile.objects.get(user=request.user)
+      serializer = UserProfileOutcomeSerializer(userprofile)
+      return Response(serializer.data)

@@ -7,6 +7,13 @@ from rest_framework.response import Response
 from rest_framework import status
 
 
+class SelfUserProfile(APIView):
+  def get(self, request):
+    userprofile = UserProfile.get(user=request.user)
+    serializer = UserProfileOutcomeSerializer(userprofile)
+    return Response(serializer.data)
+
+
 class UserProfileList(APIView):
     """
     List all userprofiles, or create a new userprofile.

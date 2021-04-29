@@ -26,7 +26,7 @@ SECRET_KEY = 'j7$)jr*%npsfds2bpbuv@7v1!_yj^@kwhcn4dx2#xmq4nn*r7_'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0']
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost']
 CORS_ORIGIN_ALLOW_ALL = True
 
 
@@ -34,17 +34,20 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 AUTH_USER_MODEL = 'user.User'
 REST_FRAMEWORK = {
-     'DEFAULT_PERMISSION_CLASSES': [
-         'rest_framework.permissions.IsAuthenticated',
-         'rest_framework.permissions.IsAdminUser',
-         ],
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-      'rest_framework_simplejwt.authentication.JWTAuthentication',
-     )
+  'DEFAULT_AUTHENTICATION_CLASSES': (
+    'rest_framework_simplejwt.authentication.JWTAuthentication',
+  ),
+  'DEFAULT_PERMISSION_CLASSES': [
+      'rest_framework.permissions.IsAuthenticated',
+      'rest_framework.permissions.IsAdminUser',
+      ],
+  'DEFAULT_permission_classes': (
+    'rest_framework_simplejwt.authentication.JWTAuthentication',
+  )
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=100),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,

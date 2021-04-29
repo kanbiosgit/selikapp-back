@@ -1,14 +1,18 @@
-from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView, CreateAPIView
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-
 from ..models import Map
 from ..serializers.income import MapIncomeSerializer
 from ..serializers.outcome import MapOutcomeSerializer
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import serializers, status
+
+
+class LastMapDetail(APIView):
+  def get(self, request, format=None):
+    map = Map.objects.exclude(archived=True)
+    serializer = MapOutcomeSerializer(map, many=True)
+    return Response(serializer.data);
 
 class MapList(APIView):
     """
@@ -22,8 +26,9 @@ class MapList(APIView):
     def post(self, request, format=None):
         serializer = MapIncomeSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            map = serializer.save()
+            serializerOut = MapOutcomeSerializer(map)
+            return Response(serializerOut.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

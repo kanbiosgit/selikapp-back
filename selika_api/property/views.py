@@ -1,8 +1,4 @@
-from django.db.models import query
-from django.shortcuts import render
 from rest_framework import status
-from rest_framework.generics import ListAPIView, DestroyAPIView, UpdateAPIView, CreateAPIView, RetrieveAPIView
-from rest_framework.permissions import IsAuthenticated
 from .models import Property
 from .serializers.income import PropertyIncomeSerializer, PropertySearchIncomeSerializer
 from .serializers.outcome import PropertyOutcomeSerializer
@@ -19,11 +15,16 @@ from django.db.models import Q
 # Create your views here.
 
 class AdminPropertySearch(APIView):
-    def get(self, request):
+
+    def post(self, request):
+        print('data', request.data)
         serializer = PropertySearchIncomeSerializer(request.data)
         userprofile = UserProfile.objects.get(user=request.user)
         if userprofile.custom_group.label == 'Admin':
-            properties = Property.objects.filter(Q(phone=serializer.data['phone']) | Q(address__iexact=serializer.data['address']) | Q(name__iexact=serializer.data['name']))
+            if serializer.data['phone'] == "" and serializer.data['address'] == "" and serializer.data['name'] == "" :
+              properties = Property.objects.all()
+            else :
+              properties = Property.objects.filter(Q(phone=serializer.data['phone']) | Q(address__iexact=serializer.data['address']) | Q(name__iexact=serializer.data['name']))
             serializerOut = PropertyOutcomeSerializer(properties, many=True)
             return Response(serializerOut.data)
         response = {
@@ -34,6 +35,7 @@ class AdminPropertySearch(APIView):
 
 
 class PropertyList(APIView):
+    
     """
     List all propertys, or create a new property.
     """
@@ -53,6 +55,7 @@ class PropertyList(APIView):
 
 
 class PropertyDetail(APIView):
+    
     """
     Retrieve, update or delete a property instance.
     """

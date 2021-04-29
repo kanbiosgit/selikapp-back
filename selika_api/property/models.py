@@ -1,8 +1,15 @@
 from django.db import models
 from django.db.models.deletion import CASCADE
 from prospecting.models import Negociator
-
+from userprofile.models import UserCustomGroup
+from user.models import AAUser
 # Create your models here.
+
+def get_sentinel_negociator():
+    user = AAUser.objects.create(email="deleted@deleted.com", password='deleted')
+    userCust = UserCustomGroup.objects.create(label="Negociator")
+    negociator, created = Negociator.objects.get_or_create(firstname='DELETED', lastname='DELETED', custom_group=userCust, user=user)
+    return negociator
 
 
 class Property(models.Model) :
@@ -31,7 +38,7 @@ class Property(models.Model) :
   )
   negociator = models.ForeignKey(
     Negociator,
-    on_delete=CASCADE,
+    on_delete=models.SET(get_sentinel_negociator),
   )
   ground = models.FloatField(
     verbose_name="surface"

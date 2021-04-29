@@ -1,5 +1,3 @@
-from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView, CreateAPIView
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from ..models import Route, Negociator, Map
@@ -16,19 +14,22 @@ def get_route_from_map(pk, map):
         return Route.objects.get(id=pk, map=map)
     except Route.DoesNotExist:
         raise Http404
+  
+def get_map(pk):
+    try:
+        return Map.objects.get(pk=pk)
+    except Map.DoesNotExist:
+        raise Http404
 
 class RouteFromMapList(APIView):
     """
     Api view for retrieve route from map
     """
 
-    def get(self, request, format=None):
-        serializerIn = RouteFromMapIncomeSerializer(data=request.data)
-        if serializerIn.is_valid():
-            negociator = get_object_or_404(Negociator, user=request.user)
-            route = Route.objects.all().filter(map=serializerIn.data['map'], negociator=negociator)
-            serializerOut = RouteOutcomeSerializer(route, many=True)
-            return Response(serializerOut.data)
+    def get(self, request, pk, format=None):
+      route = Route.objects.all().filter(map=get_map(pk))
+      serializerOut = RouteOutcomeSerializer(route, many=True)
+      return Response(serializerOut.data)
 
 
 class RouteFromMapDetail(APIView):
@@ -36,12 +37,10 @@ class RouteFromMapDetail(APIView):
     Api view for retrieve route from map
     """
 
-    def get(self, request, pk, format=None):
-        serializerIn = RouteFromMapIncomeSerializer(data=request.data)
-        if serializerIn.is_valid():
-            route = get_route_from_map(pk, serializerIn.data['map'])
-            serializerOut = RouteOutcomeSerializer(route)
-            return Response(serializerOut.data)
+    def get(self, request, pk1, pk2, format=None):
+      route = get_route_from_map(pk2, map=get_map(pk1))
+      serializerOut = RouteOutcomeSerializer(route)
+      return Response(serializerOut.data)
 
 
 class RouteList(APIView):
