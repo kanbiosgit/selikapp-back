@@ -14,6 +14,13 @@ from django.db.models import Q
 
 # Create your views here.
 
+class PropertyListProspecting(APIView):
+
+  def get(self, request) :
+    properties = Property.objects.exclude(prospecting=False)
+    serializer = PropertyOutcomeSerializer(properties, many=True)
+    return Response(serializer.data)
+
 class AdminPropertySearch(APIView):
 
     def post(self, request):
@@ -75,8 +82,7 @@ class PropertyDetail(APIView):
         property = self.get_object(pk)
         serializer = PropertyIncomeSerializer(property, data=request.data)
         if serializer.is_valid():
-            negociator = get_object_or_404(Negociator, user=request.user)
-            serializer.save(negociator=negociator)
+            serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
