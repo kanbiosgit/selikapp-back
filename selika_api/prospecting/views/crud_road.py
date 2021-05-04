@@ -30,6 +30,12 @@ class RouteFromMapList(APIView):
       route = Route.objects.all().filter(map=get_map(pk))
       serializerOut = RouteOutcomeSerializer(route, many=True)
       return Response(serializerOut.data)
+    
+    def delete(self, request, pk, format=None):
+      negociator = Negociator.objects.get(user=request.user)
+      route = Route.objects.filter(map=get_map(pk), negociator=negociator).latest('id')
+      route.delete()
+      return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class RouteFromMapDetail(APIView):
