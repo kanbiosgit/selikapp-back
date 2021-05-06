@@ -87,6 +87,7 @@ INSTALLED_APPS = [
     'userprofile',
     'prospecting',
     'property',
+    'anymail',
 ]
 
 MIDDLEWARE = [
@@ -106,7 +107,7 @@ ROOT_URLCONF = 'selika_api.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['template'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -177,3 +178,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+ANYMAIL = {
+    "MAILJET_API_KEY": "9facf65354d5ef2bc8e9ef0c0d2a68dc",
+    "MAILJET_SECRET_KEY": "d7968f1ae614701aededa2a58f8d18cf",
+}
+EMAIL_BACKEND = "anymail.backends.mailjet.EmailBackend"  # or sendgrid.EmailBackend, or...
+DEFAULT_FROM_EMAIL = "admin@kanbios.fr"  # if you don't already have this in settings
+DEFAULT_TO_EMAIL = ["admin@kanbios.fr"]
