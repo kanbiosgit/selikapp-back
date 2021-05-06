@@ -1,3 +1,4 @@
+from rest_framework import response
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from ..models import Route, Negociator, Map
@@ -33,6 +34,13 @@ class RouteFromMapList(APIView):
     
     def delete(self, request, pk, format=None):
       negociator = Negociator.objects.get(user=request.user)
+      routes = Route.objects.filter(map=get_map(pk), negociator=negociator)
+      if len(routes) < 1 :
+        response = {
+          'success': True,
+          'message': 'No more route to delete !'
+        }
+        return Response(response, status=status.HTTP_200_OK)
       route = Route.objects.filter(map=get_map(pk), negociator=negociator).latest('id')
       route.delete()
       return Response(status=status.HTTP_204_NO_CONTENT)
