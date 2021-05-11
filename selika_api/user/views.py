@@ -16,6 +16,8 @@ from userprofile.models import UserProfile
 from userprofile.serializers.outcome import UserProfileOutcomeSerializer
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
+from userprofile.models import UserCustomGroup
+from prospecting.models import Negociator
 
 
 class UserLoginView(RetrieveAPIView):
@@ -63,18 +65,25 @@ class RetrieveUser(APIView):
       return Response(serializer.data)
 
 class createNegociator(APIView):
-  def post(self, request, pk):
+  permission_classes = (AllowAny,)
+
+  def post(self, request, token):
+    print('test', request.data)
+    print('token', token)
     serializer = UserRegistrationSerializer(data=request.data)
     if serializer.is_valid():
       try:
-        user = AAuser.objects.get(token=pk)
+        user = AAUser.objects.get(token=token)
         user.set_password(serializer.data['password'])
         user.first_connexion = False
         user.is_active = True
+        userCust = UserCustomGroup.objects.create(label="Negociator")
+        Negociator.objects.create(user=user, custom_group=userCust, firstname=serializer.data['firstname'],
+                              lastname=serializer.data['lastname'], color=serializer.data['color'])
         user.save()
         response = {
           'success': True,
-          'message': 'Password set'
+          'message': 'Negociator create'
         }
         return Response(response, status=status.HTTP_200_OK)
       except:
@@ -83,10 +92,14 @@ class createNegociator(APIView):
           'message': 'User not found, token is expired'
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
+    response = {
+      'success': False,
+      'message': 'bad request'
+    }
+    return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 class sendEmail(APIView):
   def post(self, request):
-    print('request data', request.data)
     serializer = SendEmailSerializer(data=request.data)
     if serializer.is_valid():
       try:
@@ -98,14 +111,12 @@ class sendEmail(APIView):
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
       else:
-        print('test', user.token)
         msg_plain = render_to_string(
-          'msg.html',
-          {'link': 'http://localhost:8080' + 'création-négociateur' + user.token},
+          'negociator-invitation.html',
+          {'link': 'http://localhost:8080/' + 'creation/negociator/' + user.token},
         )
-        print('test1')
         msg = EmailMultiAlternatives(
-          'Selika app : Changement de mot de passe',
+          'Selika app : Création de négociateur',
           msg_plain,
           settings.DEFAULT_FROM_EMAIL,
           [user.email]
@@ -115,4 +126,8 @@ class sendEmail(APIView):
           'success': True,
         }
         return Response(response, status=status.HTTP_200_OK)
-    return Response(status=status.HTTP_400_BAD_REQUEST)
+    response = {
+      'success': False,
+      'message': 'bad argument'
+    }
+    return Response(response, status=status.HTTP_400_BAD_REQUEST)

@@ -86,7 +86,6 @@ class NegociatorDetail(APIView):
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, pk, format=None):
-        print('request data', request.data)
         userprofile = UserProfile.objects.get(user=request.user)
         if userprofile.custom_group.label == 'Admin':
             negociator = self.get_object(pk)
