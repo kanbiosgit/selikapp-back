@@ -54,7 +54,6 @@ class PropertyListProspecting(APIView):
   def get(self, request) :
     properties = Property.objects.exclude(prospecting=False).exclude(endDate__lte=date.today())
     serializer = PropertyOutcomeSerializer(properties, many=True)
-    print('properties', serializer.data)
     return Response(serializer.data)
 
 class AdminPropertySearch(APIView):
