@@ -43,7 +43,7 @@ class Property(models.Model) :
   email = models.EmailField(default="test@test.fr")
   endDate = models.DateField(
     verbose_name="Date de fin",
-    default=datetime.now().replace(year = datetime.now().year + 1)
+    default=datetime.now().replace(year = datetime.now().year + 1).date()
   )
   price = models.IntegerField(
     verbose_name="prix"
