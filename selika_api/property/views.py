@@ -58,14 +58,22 @@ class PropertyListProspecting(APIView):
 
 class AdminPropertySearch(APIView):
 
+    def get_object(self, id):
+      try:
+          return Negociator.objects.get(id=id)
+      except Negociator.DoesNotExist:
+          raise Http404
+
     def post(self, request):
         serializer = PropertySearchIncomeSerializer(request.data)
         userprofile = UserProfile.objects.get(user=request.user)
         if userprofile.custom_group.label == 'Admin':
-            if serializer.data['phone'] == "" and serializer.data['address'] == "" and serializer.data['name'] == "" :
+            if serializer.data['phone'] == "" and serializer.data['email'] == "" and serializer.data['name'] == "" and serializer.data['id'] == None :
               properties = Property.objects.all().exclude(endDate__lte=date.today())
+            elif serializer.data['id'] is not None :
+              properties = Property.objects.filter(Q(phone=serializer.data['phone']) | Q(email=serializer.data['email']) | Q(name__iexact=serializer.data['name']) | Q(negociator=self.get_object(serializer.data['id']))).exclude(endDate__lte=date.today())
             else :
-              properties = Property.objects.filter(Q(phone=serializer.data['phone']) | Q(address__iexact=serializer.data['address']) | Q(name__iexact=serializer.data['name'])).exclude(endDate__lte=date.today())
+              properties = Property.objects.filter(Q(phone=serializer.data['phone']) | Q(email=serializer.data['email']) | Q(name__iexact=serializer.data['name'])).exclude(endDate__lte=date.today())
             serializerOut = PropertyOutcomeSerializer(properties, many=True)
             return Response(serializerOut.data)
         response = {
