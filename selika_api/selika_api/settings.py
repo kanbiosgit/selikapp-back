@@ -88,6 +88,7 @@ INSTALLED_APPS = [
     'prospecting',
     'property',
     'anymail',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
