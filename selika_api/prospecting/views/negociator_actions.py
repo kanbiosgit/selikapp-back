@@ -37,22 +37,9 @@ class NegociatorList(APIView):
     List all negociators, or create a new negociator.
     """
     def get(self, request, format=None):
-        userprofile = UserProfile.objects.get(user=request.user)
-        if userprofile.custom_group.label == 'Admin':
-            negociator = Negociator.objects.exclude(firstname="DELETED")
-            serializer = NegociatorOutcomeSerializer(negociator, many=True)
-            return Response(serializer.data)
-        try:
-            negociator = Negociator.objects.get(user=request.user)
-            serializer = NegociatorOutcomeSerializer(negociator)
-            return Response(serializer.data)
-        except Exception as e:
-            response = {
-                'success': False,
-                'message': 'This user is nor an Admin or a negociator',
-                'error': str(e)
-            }
-            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        negociator = Negociator.objects.exclude(firstname="DELETED")
+        serializer = NegociatorOutcomeSerializer(negociator, many=True)
+        return Response(serializer.data)
 
     def post(self, request, format=None):
         serializer = NegociatorCreateIncomeSerializer(data=request.data)
