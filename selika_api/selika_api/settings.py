@@ -181,9 +181,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 ANYMAIL = {
-    "MAILJET_API_KEY": "9facf65354d5ef2bc8e9ef0c0d2a68dc",
-    "MAILJET_SECRET_KEY": "d7968f1ae614701aededa2a58f8d18cf",
+    "MAILJET_API_KEY": "08877f948b8b0845442867ac78756062",
+    "MAILJET_SECRET_KEY": "1b7c25e9b496d513ed33ad8e2a11fe9c",
 }
 EMAIL_BACKEND = "anymail.backends.mailjet.EmailBackend"  # or sendgrid.EmailBackend, or...
-DEFAULT_FROM_EMAIL = "admin@kanbios.fr"  # if you don't already have this in settings
-DEFAULT_TO_EMAIL = ["admin@kanbios.fr"]
+DEFAULT_FROM_EMAIL = "contactselika33@orange.fr"  # if you don't already have this in settings
+DEFAULT_TO_EMAIL = ["contactselika33@orange.fr"]

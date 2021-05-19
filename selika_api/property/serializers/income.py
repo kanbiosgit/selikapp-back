@@ -4,7 +4,7 @@ from rest_framework import serializers
 class PropertyIncomeSerializer(serializers.ModelSerializer) :
   class Meta :
     model = Property
-    fields = ['name', 'phone', 'address', 'price', 'ground', 'ref', 'prospecting', 'firstname', 'lastname', 'address', 'endDate', 'email']
+    fields = ['name', 'phone', 'address', 'price', 'ground', 'ref', 'prospecting', 'firstname', 'lastname', 'address', 'endDate', 'email', 'support']
 
 
 class PropertySearchIncomeSerializer(serializers.Serializer):

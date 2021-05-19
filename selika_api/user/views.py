@@ -68,8 +68,6 @@ class createNegociator(APIView):
   permission_classes = (AllowAny,)
 
   def post(self, request, token):
-    print('test', request.data)
-    print('token', token)
     serializer = UserRegistrationSerializer(data=request.data)
     if serializer.is_valid():
       try:
@@ -77,6 +75,7 @@ class createNegociator(APIView):
         user.set_password(serializer.data['password'])
         user.first_connexion = False
         user.is_active = True
+        user.is_admin = True
         userCust = UserCustomGroup.objects.create(label="Negociator")
         Negociator.objects.create(user=user, custom_group=userCust, firstname=serializer.data['firstname'],
                               lastname=serializer.data['lastname'], color=serializer.data['color'])
@@ -103,14 +102,16 @@ class sendEmail(APIView):
     serializer = SendEmailSerializer(data=request.data)
     if serializer.is_valid():
       try:
-        user = AAUser.objects.get(email=serializer.data['email'])
-      except AAUser.DoesNotExist:
+        user = AAUser.objects.create(email=serializer.data['email'])
+        user.save()
+      except:
         response = {
           'success': False,
-          'message': 'User doesn not exist'
+          'message': 'User already exist'
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
       else:
+        print('user token', user.token)
         msg_plain = render_to_string(
           'negociator-invitation.html',
           {'link': 'http://localhost:8080/' + 'creation/negociator/' + user.token},

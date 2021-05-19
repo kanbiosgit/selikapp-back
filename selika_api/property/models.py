@@ -66,6 +66,10 @@ class Property(models.Model) :
     verbose_name="Date de création",
     auto_now_add=True,
   )
+  support = models.CharField(
+    max_length=255,
+    default="SeLoger"
+  )
 
   class Meta : 
     verbose_name = "Prospecté"
