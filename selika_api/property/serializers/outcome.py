@@ -9,7 +9,7 @@ class PropertyOutcomeSerializer(serializers.ModelSerializer):
 
     class Meta:
       model = Property
-      fields = ['name', 'phone', 'address', 'price', 'ground', 'ref', 'prospecting', 'id', 'creation', 'negociator', 'firstname', 'lastname', 'email', 'endDate', 'support']
+      fields = ['name', 'phone', 'address', 'price', 'ground', 'ref', 'prospecting', 'id', 'creation', 'negociator', 'firstname', 'lastname', 'email', 'endDate', 'support', 'lat', 'lng']
 
 class CommentOutcomeSerializer(serializers.ModelSerializer):
   class Meta:

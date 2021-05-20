@@ -70,6 +70,12 @@ class Property(models.Model) :
     max_length=255,
     default="SeLoger"
   )
+  lat = models.FloatField(
+    verbose_name="latitude"
+  )
+  lng = models.FloatField(
+    verbose_name="longitude"
+  )
 
   class Meta : 
     verbose_name = "Prospecté"

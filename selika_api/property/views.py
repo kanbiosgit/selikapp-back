@@ -1,6 +1,6 @@
 from rest_framework import status
 from .models import Property, Comment
-from .serializers.income import PropertyIncomeSerializer, PropertySearchIncomeSerializer, CommentIncomeSerializer
+from .serializers.income import PropertyIncomeSerializer, PropertySearchIncomeSerializer, CommentIncomeSerializer, PropertySearchIncomeNegociatorSerializer
 from .serializers.outcome import PropertyOutcomeSerializer, CommentOutcomeSerializer
 from django.http import Http404
 from rest_framework.views import APIView
@@ -65,22 +65,35 @@ class AdminPropertySearch(APIView):
           raise Http404
 
     def post(self, request):
-        serializer = PropertySearchIncomeSerializer(request.data)
         userprofile = UserProfile.objects.get(user=request.user)
+        properties = None
         if userprofile.custom_group.label == 'Admin':
-            if serializer.data['phone'] == "" and serializer.data['email'] == "" and serializer.data['name'] == "" and serializer.data['id'] == None :
-              properties = Property.objects.all().exclude(endDate__lte=date.today())
-            elif serializer.data['id'] is not None :
-              properties = Property.objects.filter(Q(phone=serializer.data['phone']) | Q(email=serializer.data['email']) | Q(name__iexact=serializer.data['name']) | Q(negociator=self.get_object(serializer.data['id']))).exclude(endDate__lte=date.today())
+            serializer = PropertySearchIncomeSerializer(data=request.data)
+            if serializer.is_valid():
+              if serializer.data['phone'] == "" and serializer.data['email'] == "" and serializer.data['name'] == "" and serializer.data['id'] == None :
+                properties = Property.objects.all()
+              elif serializer.data['id'] is not None :
+                properties = Property.objects.filter(Q(phone=serializer.data['phone']) | Q(email=serializer.data['email']) | Q(name__iexact=serializer.data['name']) | Q(negociator=self.get_object(serializer.data['id'])))
+              else :
+                properties = Property.objects.filter(Q(phone=serializer.data['phone']) | Q(email=serializer.data['email']) | Q(name__iexact=serializer.data['name']))
             else :
-              properties = Property.objects.filter(Q(phone=serializer.data['phone']) | Q(email=serializer.data['email']) | Q(name__iexact=serializer.data['name'])).exclude(endDate__lte=date.today())
-            serializerOut = PropertyOutcomeSerializer(properties, many=True)
-            return Response(serializerOut.data)
-        response = {
-            'success': False,
-            'message': 'Only admin can access this route'
-        }
-        return Response(response, status=status.HTTP_400_BAD_REQUEST)
+              return Response(status=status.HTTP_400_BAD_REQUEST)
+        else :
+          serializer = PropertySearchIncomeNegociatorSerializer(data=request.data)
+          if serializer.is_valid():
+            try :
+              negociator = Negociator.objects.get(user=request.user)
+            except :
+              return Response(status=status.HTTP_400_BAD_REQUEST)
+            if serializer.data['phone'] == "" and serializer.data['email'] == "" and serializer.data['name'] == "" :
+              properties = Property.objects.all().filter(negociator=negociator)
+            else :
+              properties = Property.objects.filter(Q(phone=serializer.data['phone']) | Q(email=serializer.data['email']) | Q(name__iexact=serializer.data['name'])).filter(negociator=negociator)
+          else :
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        print('properties', properties)
+        serializerOut = PropertyOutcomeSerializer(properties, many=True)
+        return Response(serializerOut.data)
 
 
 class PropertyList(APIView):

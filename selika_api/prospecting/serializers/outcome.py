@@ -20,4 +20,4 @@ class RouteOutcomeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Route
-        fields = ['startLat', 'startLng', 'endLat', 'endLng', 'id', 'negociator', 'map']
+        fields = ['startLat', 'startLng', 'endLat', 'endLng', 'id', 'negociator', 'map', 'date']
