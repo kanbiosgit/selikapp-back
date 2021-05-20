@@ -1,3 +1,4 @@
+from selika_api.responseHandler import respond
 from rest_framework.response import Response
 from ..models import Map
 from ..serializers.income import MapIncomeSerializer
@@ -12,7 +13,7 @@ class LastMapDetail(APIView):
   def get(self, request, format=None):
     map = Map.objects.exclude(archived=True)
     serializer = MapOutcomeSerializer(map, many=True)
-    return Response(serializer.data);
+    return respond(status.HTTP_200_OK, serializer.data);
 
 class MapList(APIView):
     """
@@ -21,15 +22,15 @@ class MapList(APIView):
     def get(self, request, format=None):
         maps = Map.objects.all()
         serializer = MapOutcomeSerializer(maps, many=True)
-        return Response(serializer.data)
+        return respond(status.HTTP_200_OK, serializer.data)
 
     def post(self, request, format=None):
         serializer = MapIncomeSerializer(data=request.data)
         if serializer.is_valid():
             map = serializer.save()
             serializerOut = MapOutcomeSerializer(map)
-            return Response(serializerOut.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return respond(data=serializerOut.data, response_status=status.HTTP_201_CREATED)
+        return respond(error=serializer.errors, response_status=status.HTTP_400_BAD_REQUEST)
 
 
 class MapDetail(APIView):
@@ -45,17 +46,17 @@ class MapDetail(APIView):
     def get(self, request, pk, format=None):
         map = self.get_object(pk)
         serializer = MapOutcomeSerializer(map)
-        return Response(serializer.data)
+        return respond(status.HTTP_200_OK, serializer.data)
 
     def put(self, request, pk, format=None):
         map = self.get_object(pk)
         serializer = MapIncomeSerializer(map, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return respond(status.HTTP_200_OK, serializer.data)
+        return respond(error=serializer.errors, response_status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
         map = self.get_object(pk)
         map.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return respond(response_status=status.HTTP_204_NO_CONTENT)

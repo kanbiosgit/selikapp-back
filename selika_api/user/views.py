@@ -1,3 +1,4 @@
+from selika_api.responseHandler import respond
 from django.conf import settings
 from django.core.mail.message import EmailMultiAlternatives
 from rest_framework.views import APIView
@@ -36,31 +37,25 @@ class UserLoginView(RetrieveAPIView):
                 'status code': status.HTTP_400_BAD_REQUEST,
                 'message': 'user not found'
             }
+            return respond(status.HTTP_400_BAD_REQUEST, error='user not found')
         else:
             try:
                 refresh = RefreshToken.for_user(user)
                 update_last_login(None, user)
             except AAUser.DoesNotExist:
-                response = {
-                    'success': False,
-                    'status code': status.HTTP_400_BAD_REQUEST,
-                    'message': 'User with given email and password does not exists'
-                }
-                return Response(response, status=status.HTTP_400_BAD_REQUEST)
+                return respond(status.HTTP_400_BAD_REQUEST, error="User with given email and password does not exists")
             response = {
-                'success': 'True',
-                'status code': status.HTTP_200_OK,
                 'message': 'User logged in  successfully',
                 'access_token': str(refresh.access_token),
                 'refresh_token': str(refresh),
             }
         status_code = status.HTTP_200_OK
 
-        return Response(response, status=status_code)
+        return respond(status_code, response)
 
 class RetrieveUser(APIView):
     def get(self, request):
-      userprofile = UserProfile.objects.get(user=request.user)
+      userprofile = request.user.userprofile
       serializer = UserProfileOutcomeSerializer(userprofile)
       return Response(serializer.data)
 
@@ -81,21 +76,18 @@ class createNegociator(APIView):
                               lastname=serializer.data['lastname'], color=serializer.data['color'])
         user.save()
         response = {
-          'success': True,
           'message': 'Negociator create'
         }
-        return Response(response, status=status.HTTP_200_OK)
+        return respond(data=response, response_status=status.HTTP_200_OK)
       except:
         response = {
-          'success': False,
           'message': 'User not found, token is expired'
         }
-        return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        return respond(data=response, response_status=status.HTTP_400_BAD_REQUEST)
     response = {
-      'success': False,
       'message': 'bad request'
     }
-    return Response(response, status=status.HTTP_400_BAD_REQUEST)
+    return respond(data=response, response_status=status.HTTP_400_BAD_REQUEST)
 
 class sendEmail(APIView):
   def post(self, request):
@@ -106,10 +98,9 @@ class sendEmail(APIView):
         user.save()
       except:
         response = {
-          'success': False,
           'message': 'User already exist'
         }
-        return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        return respond(data=response, response_status=status.HTTP_400_BAD_REQUEST)
       else:
         print('user token', user.token)
         msg_plain = render_to_string(
@@ -123,12 +114,8 @@ class sendEmail(APIView):
           [user.email]
         )
         msg.send()
-        response = {
-          'success': True,
-        }
-        return Response(response, status=status.HTTP_200_OK)
+        return Response(response_status=status.HTTP_200_OK)
     response = {
-      'success': False,
       'message': 'bad argument'
     }
-    return Response(response, status=status.HTTP_400_BAD_REQUEST)
+    return Response(error=response, response_status=status.HTTP_400_BAD_REQUEST)

@@ -1,3 +1,4 @@
+from selika_api.responseHandler import respond
 from rest_framework import response
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -30,7 +31,7 @@ class RouteFromMapList(APIView):
     def get(self, request, pk, format=None):
       route = Route.objects.all().filter(map=get_map(pk))
       serializerOut = RouteOutcomeSerializer(route, many=True)
-      return Response(serializerOut.data)
+      return respond(status.HTTP_200_OK, serializerOut.data)
     
     def delete(self, request, pk, format=None):
       negociator = Negociator.objects.get(user=request.user)
@@ -40,10 +41,10 @@ class RouteFromMapList(APIView):
           'success': True,
           'message': 'No more route to delete !'
         }
-        return Response(response, status=status.HTTP_200_OK)
+        return respond(data=response, response_status=status.HTTP_200_OK)
       route = Route.objects.filter(map=get_map(pk), negociator=negociator).latest('id')
       route.delete()
-      return Response(status=status.HTTP_204_NO_CONTENT)
+      return respond(response_status=status.HTTP_204_NO_CONTENT)
 
 
 class RouteFromMapDetail(APIView):
@@ -54,7 +55,7 @@ class RouteFromMapDetail(APIView):
     def get(self, request, pk1, pk2, format=None):
       route = get_route_from_map(pk2, map=get_map(pk1))
       serializerOut = RouteOutcomeSerializer(route)
-      return Response(serializerOut.data)
+      return respond(status.HTTP_200_OK, serializerOut.data)
 
 
 class RouteList(APIView):
@@ -64,7 +65,7 @@ class RouteList(APIView):
     def get(self, request, format=None):
         route = Route.objects.all()
         serializer = RouteOutcomeSerializer(route, many=True)
-        return Response(serializer.data)
+        return respond(status.HTTP_200_OK, serializer.data)
 
     def post(self, request, format=None):
         serializer = RouteIncomeSerializer(data=request.data)
@@ -72,8 +73,8 @@ class RouteList(APIView):
         if serializer.is_valid():
             route = serializer.save(negociator=negociator)
             serializerOut = RouteOutcomeSerializer(route)
-            return Response(serializerOut.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return respond(data=serializerOut.data, response_status=status.HTTP_201_CREATED)
+        return respond(error=serializer.errors, response_status=status.HTTP_400_BAD_REQUEST)
 
 
 class RouteDetail(APIView):
@@ -89,7 +90,7 @@ class RouteDetail(APIView):
     def get(self, request, pk, format=None):
         route = self.get_object(pk)
         serializer = RouteIncomeSerializer(route)
-        return Response(serializer.data)
+        return respond(status.HTTP_200_OK, serializer.data)
 
     def put(self, request, pk, format=None):
         route = self.get_object(pk)
@@ -98,10 +99,10 @@ class RouteDetail(APIView):
         if serializer.is_valid():
             route = serializer.save(negociator=negociator)
             serializerOut = RouteOutcomeSerializer(route)
-            return Response(serializerOut.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return respond(status.HTTP_200_OK, serializerOut.data)
+        return respond(error=serializer.errors, response_status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
         route = self.get_object(pk)
         route.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return respond(response_status=status.HTTP_204_NO_CONTENT)

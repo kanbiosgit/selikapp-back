@@ -1,3 +1,4 @@
+from selika_api.responseHandler import respond
 from rest_framework.response import Response
 from ..models import Negociator
 from ..serializers.income import NegociatorIncomeSerializer, NegociatorIncomeColorSerializer, NegociatorCreateIncomeSerializer
@@ -21,7 +22,7 @@ class NegociatorHimself(APIView):
     def get(self, request, format=None):
         negociator = get_object_or_404(Negociator, user=request.user)
         serializer = NegociatorOutcomeSerializer(negociator)
-        return Response(serializer.data)
+        return respond(data=serializer.data, response_status=status.HTTP_200_OK)
 
     def put(self, request, format=None):
         negociator = get_object_or_404(Negociator, user=request.user)
@@ -29,8 +30,8 @@ class NegociatorHimself(APIView):
         if serializer.is_valid():
             negociator = serializer.save()
             serializerOut = NegociatorOutcomeSerializer(negociator)
-            return Response(serializerOut.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return respond(status.HTTP_200_OKserializerOut.data)
+        return respond(error=serializer.errors, response_status=status.HTTP_400_BAD_REQUEST)
 
 class NegociatorList(APIView):
     """
@@ -39,15 +40,15 @@ class NegociatorList(APIView):
     def get(self, request, format=None):
         negociator = Negociator.objects.exclude(firstname="DELETED")
         serializer = NegociatorOutcomeSerializer(negociator, many=True)
-        return Response(serializer.data)
+        return respond(data=serializer.data, response_status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
         serializer = NegociatorCreateIncomeSerializer(data=request.data)
         if serializer.is_valid():
             negociator = serializer.save()
             serializerOut = NegociatorOutcomeSerializer(negociator)
-            return Response(serializerOut.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return respond(data=serializerOut.data, response_status=status.HTTP_201_CREATED)
+        return respond(error=serializer.errors, response_status=status.HTTP_400_BAD_REQUEST)
 
 
 class NegociatorDetail(APIView):
@@ -61,43 +62,40 @@ class NegociatorDetail(APIView):
             raise Http404
 
     def get(self, request, pk, format=None):
-        userprofile = UserProfile.objects.get(user=request.user)
+        userprofile = request.user.userprofile
         if userprofile.custom_group.label == 'Admin':
             negociator = self.get_object(pk)
             serializer = NegociatorOutcomeSerializer(negociator)
-            return Response(serializer.data)
+            return respond(status.HTTP_200_OK, data=serializer.data)
         response = {
-            'success': False,
             'message': 'You are not allowed'
         }
-        return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        return respond(error=response, response_status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, pk, format=None):
-        userprofile = UserProfile.objects.get(user=request.user)
+        userprofile = request.user.userprofile
         if userprofile.custom_group.label == 'Admin':
             negociator = self.get_object(pk)
             serializer = NegociatorIncomeColorSerializer(negociator, data=request.data)
             if serializer.is_valid():
                 negociator = serializer.save()
                 serializerOut = NegociatorOutcomeSerializer(negociator)
-                return Response(serializerOut.data)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return respond(status.HTTP_200_OK, data=serializerOut.data)
+            return respond(error=serializer.errors, response_status=status.HTTP_400_BAD_REQUEST)
         response = {
-            'success': False,
             'message': 'Only admin can modify a negociator'
         }
-        return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        return respond(error=response, response_status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
-        userprofile = UserProfile.objects.get(user=request.user)
+        userprofile = request.user.userprofile
         if userprofile.custom_group.label == 'Admin':
             negociator = self.get_object(pk)
             negociator.delete()
             negociators = Negociator.objects.exclude(firstname="DELETED")
             serializerOut = NegociatorOutcomeSerializer(negociators, many=True)
-            return Response(data=serializerOut.data)
+            return respond(status.HTTP_200_OK, data=serializerOut.data)
         response = {
-            'success': False,
             'message': 'Only admin can modify a negociator'
         }
-        return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        return Response(error=response, response_status=status.HTTP_400_BAD_REQUEST)

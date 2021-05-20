@@ -14,7 +14,7 @@ def get_sentinel_negociator():
       userCust = UserCustomGroup.objects.create(label="Negociator")
       negociator, created = Negociator.objects.get_or_create(firstname='DELETED', lastname='DELETED', custom_group=userCust, user=user)
     else :
-      userProfile = UserProfile.objects.get(user=user)
+      userProfile = request.user.userprofile(user=user)
       negociator, created = Negociator.objects.get_or_create(firstname='DELETED', lastname='DELETED', custom_group=userProfile.custom_group, user=user)
     return negociator
 
