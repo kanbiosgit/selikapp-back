@@ -78,12 +78,14 @@ class PropertySearch(APIView):
             properties = properties.filter(email__iexact=request.data['phone'])
         if 'negociator' in request.data:
             properties = properties.filter(negociator=self.get_object(request.data['negociator']))
-        if 'date' in request.data:
-            properties = properties.filter(creation__gte=request.data['date'])
+        if 'firstDate' in request.data:
+            properties = properties.filter(creation__gte=request.data['firstDate'])
+        if 'secondDate' in request.data:
+            properties = properties.filter(creation__lte=request.data['secondDate'])
         if 'price' in request.data:
-            properties = properties.filter(price__lte=request.data['price'])
+            properties = properties.filter(price__gte=request.data['price'][0]).filter(price__lte=request.data['price'][1])
         if 'ground' in request.data:
-            properties = properties.filter(ground__gte=request.data['ground'])
+            properties = properties.filter(ground__gte=request.data['ground'][0]).filter(ground__lte=request.data['ground'][1])
         return respond(status.HTTP_200_OK, data=PropertyOutcomeSerializer(properties, many=True).data)
 
 
