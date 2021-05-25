@@ -61,10 +61,8 @@ class PropertySearch(APIView):
 
     def get_object(self, id):
       try:
-          print('je passe ici')
           return Negociator.objects.get(id=id)
       except Negociator.DoesNotExist:
-          print('jai pas trouvé')
           raise Http404
   
     def post(self, request):
@@ -96,7 +94,7 @@ class PropertyList(APIView):
     """
 
     def get(self, request, format=None):
-        properties = Property.objects.all().exclude(endDate__lte=date.today())
+        properties = Property.objects.all()
         serializer = PropertyOutcomeSerializer(properties, many=True)
         return respond(status.HTTP_200_OK, serializer.data)
 
