@@ -19,7 +19,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from userprofile.models import UserCustomGroup
 from prospecting.models import Negociator
-
+from django.conf import settings
 
 class UserLoginView(RetrieveAPIView):
     permission_classes = (AllowAny,)
@@ -57,7 +57,8 @@ class RetrieveUser(APIView):
     def get(self, request):
       userprofile = request.user.userprofile
       serializer = UserProfileOutcomeSerializer(userprofile)
-      return Response(serializer.data)
+      status_code = status.HTTP_200_OK
+      return respond(status_code, serializer.data)
 
 class createNegociator(APIView):
   permission_classes = (AllowAny,)
@@ -105,7 +106,7 @@ class sendEmail(APIView):
         print('user token', user.token)
         msg_plain = render_to_string(
           'negociator-invitation.html',
-          {'link': 'http://localhost:8080/' + 'creation/negociator/' + user.token},
+          {'link': settings.FRONT_URL + 'creation/negociator/' + user.token},
         )
         msg = EmailMultiAlternatives(
           'Selika app : Création de négociateur',
@@ -114,8 +115,8 @@ class sendEmail(APIView):
           [user.email]
         )
         msg.send()
-        return Response(response_status=status.HTTP_200_OK)
+        return respond(response_status=status.HTTP_200_OK)
     response = {
       'message': 'bad argument'
     }
-    return Response(error=response, response_status=status.HTTP_400_BAD_REQUEST)
+    return respond(error=response, response_status=status.HTTP_400_BAD_REQUEST)
