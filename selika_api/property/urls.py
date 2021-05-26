@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import PropertyList, PropertyDetail, PropertySearch, PropertyListProspecting, PropertyFromNegociator, CommentOnProperty, CommentDetail
+from .views import PropertyList, PropertyDetail, PropertySearch, PropertyListProspecting, PropertyFromNegociator, CommentOnProperty, CommentDetail, PropertyFromAdmin
 
 urlpatterns = [
     path('property', PropertyList.as_view()),
@@ -8,5 +8,6 @@ urlpatterns = [
     path('property/prospecting', PropertyListProspecting.as_view()),
     path('property/negociator/prospecting', PropertyFromNegociator.as_view()),
     path('property/<int:pk>/comment', CommentOnProperty.as_view()),
-    path('comment/<int:pk>', CommentDetail.as_view())
+    path('comment/<int:pk>', CommentDetail.as_view()),
+    path('property/negociator/<int:pk>/admin', PropertyFromAdmin.as_view())
 ]

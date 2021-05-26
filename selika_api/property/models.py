@@ -76,6 +76,9 @@ class Property(models.Model) :
   lng = models.FloatField(
     verbose_name="longitude"
   )
+  created_by_admin = models.BooleanField(
+    default=False
+  )
 
   class Meta : 
     verbose_name = "Prospecté"

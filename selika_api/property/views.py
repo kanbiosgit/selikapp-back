@@ -50,6 +50,23 @@ class PropertyFromNegociator(APIView):
     serializer = PropertyOutcomeSerializer(properties, many=True)
     return respond(status.HTTP_200_OK, serializer.data)
 
+
+class PropertyFromAdmin(APIView):
+  def get_object(self, id):
+    try:
+        return Negociator.objects.get(id=id)
+    except Negociator.DoesNotExist:
+        raise Http404
+
+  def post(self, request, pk):
+    negociator = self.get_object(pk)
+    serializer = PropertyIncomeSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(negociator=negociator, created_by_admin=True)
+        return respond(data=serializer.data, response_status=status.HTTP_201_CREATED)
+    return respond(error=serializer.errors, response_status=status.HTTP_400_BAD_REQUEST)
+    
+
 class PropertyListProspecting(APIView):
 
   def get(self, request) :
@@ -86,6 +103,8 @@ class PropertySearch(APIView):
             properties = properties.filter(price__gte=request.data['price'][0]).filter(price__lte=request.data['price'][1])
         if 'ground' in request.data:
             properties = properties.filter(ground__gte=request.data['ground'][0]).filter(ground__lte=request.data['ground'][1])
+        if 'created_by_admin' in request.data:
+            properties = properties.filter(created_by_admin=True)
         return respond(status.HTTP_200_OK, data=PropertyOutcomeSerializer(properties, many=True).data)
 
 
