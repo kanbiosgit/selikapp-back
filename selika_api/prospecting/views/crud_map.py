@@ -11,8 +11,10 @@ from rest_framework import serializers, status
 
 class LastMapDetail(APIView):
   def get(self, request, format=None):
-    map = Map.objects.exclude(archived=True)
-    serializer = MapOutcomeSerializer(map, many=True)
+    map = Map.objects.exclude(archived=True).last()
+    if map is None :
+      map = Map.objects.create(archived=False)
+    serializer = MapOutcomeSerializer(map)
     return respond(status.HTTP_200_OK, serializer.data);
 
 class MapList(APIView):
