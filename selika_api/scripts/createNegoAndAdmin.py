@@ -12,7 +12,7 @@ def run():
   negociatorCustomGroup = UserCustomGroup.objects.create(label="Negociator")
   adminCustomGroup = UserCustomGroup.objects.create(label="Admin")
   negociatorUserProfile, created = Negociator.objects.get_or_create(firstname="Negociateur", lastname="Negociateur", custom_group=negociatorCustomGroup, user=negociatorUser, color="#b13939")
-  adminUserProfile, created = request.user.userprofile_or_create(firstname="Admin", lastname="Admin", custom_group=adminCustomGroup, user=admin)
+  adminUserProfile, created = UserProfile.objects.get_or_create(firstname="Admin", lastname="Admin", custom_group=adminCustomGroup, user=admin)
 
   negociatorUserProfile.save()
   adminUserProfile.save()
