@@ -187,3 +187,5 @@ ANYMAIL = {
 EMAIL_BACKEND = "anymail.backends.mailjet.EmailBackend"  # or sendgrid.EmailBackend, or...
 DEFAULT_FROM_EMAIL = "contactselika33@orange.fr"  # if you don't already have this in settings
 DEFAULT_TO_EMAIL = ["contactselika33@orange.fr"]
+
+FRONT_URL = 'http://localhost:8080/'
