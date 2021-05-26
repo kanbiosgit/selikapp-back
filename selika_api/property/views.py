@@ -90,9 +90,9 @@ class PropertySearch(APIView):
         if 'email' in request.data:
             properties = properties.filter(email=request.data['email'])
         if 'phone' in request.data:
-            properties = properties.filter(email=request.data['phone'])
+            properties = properties.filter(phone=request.data['phone'])
         if 'name' in request.data:
-            properties = properties.filter(email__iexact=request.data['phone'])
+            properties = properties.filter(name__iexact=request.data['name'])
         if 'negociator' in request.data:
             properties = properties.filter(negociator=self.get_object(request.data['negociator']))
         if 'firstDate' in request.data:
