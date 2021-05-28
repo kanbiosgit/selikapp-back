@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from .serializers.income import UserLoginSerializer, UserRegistrationSerializer, SendEmailSerializer
 from .serializers.outcome import UserOutcomeSerializer
-from rest_framework.generics import RetrieveAPIView
+from rest_framework.generics import GenericAPIView, RetrieveAPIView
 from django.contrib.auth import authenticate
 from .models import AAUser
 from django.contrib.auth.models import update_last_login
@@ -60,35 +60,37 @@ class RetrieveUser(APIView):
       status_code = status.HTTP_200_OK
       return respond(status_code, serializer.data)
 
-class createNegociator(APIView):
-  permission_classes = (AllowAny,)
+class createNegociator(GenericAPIView):
+    authentication_classes = []
+    permission_classes = (AllowAny,)
 
-  def post(self, request, token):
-    serializer = UserRegistrationSerializer(data=request.data)
-    if serializer.is_valid():
-      try:
-        user = AAUser.objects.get(token=token)
-        user.set_password(serializer.data['password'])
-        user.first_connexion = False
-        user.is_active = True
-        user.is_admin = True
-        userCust = UserCustomGroup.objects.create(label="Negociator")
-        Negociator.objects.create(user=user, custom_group=userCust, firstname=serializer.data['firstname'],
-                              lastname=serializer.data['lastname'], color=serializer.data['color'])
-        user.save()
-        response = {
-          'message': 'Negociator create'
-        }
-        return respond(data=response, response_status=status.HTTP_200_OK)
-      except:
-        response = {
-          'message': 'User not found, token is expired'
-        }
-        return respond(data=response, response_status=status.HTTP_400_BAD_REQUEST)
-    response = {
-      'message': 'bad request'
-    }
-    return respond(data=response, response_status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request, token):
+      print('test')
+      serializer = UserRegistrationSerializer(data=request.data)
+      if serializer.is_valid():
+        try:
+          user = AAUser.objects.get(token=token)
+          user.set_password(serializer.data['password'])
+          user.first_connexion = False
+          user.is_active = True
+          user.is_admin = True
+          userCust = UserCustomGroup.objects.create(label="Negociator")
+          Negociator.objects.create(user=user, custom_group=userCust, firstname=serializer.data['firstname'],
+                                lastname=serializer.data['lastname'], color=serializer.data['color'])
+          user.save()
+          response = {
+            'message': 'Negociator create'
+          }
+          return respond(data=response, response_status=status.HTTP_200_OK)
+        except:
+          response = {
+            'message': 'User not found, token is expired'
+          }
+          return respond(data=response, response_status=status.HTTP_400_BAD_REQUEST)
+      response = {
+        'message': 'bad request'
+      }
+      return respond(data=response, response_status=status.HTTP_400_BAD_REQUEST)
 
 class sendEmail(APIView):
   def post(self, request):
