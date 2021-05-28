@@ -46,7 +46,7 @@ class CommentOnProperty(APIView):
 class PropertyFromNegociator(APIView):
   def get(self, request):
     negociator = Negociator.objects.get(user=request.user)
-    properties = Property.objects.all().filter(negociator=negociator).exclude(endDate__lte=date.today())
+    properties = Property.objects.all().filter(negociator=negociator)
     serializer = PropertyOutcomeSerializer(properties, many=True)
     return respond(status.HTTP_200_OK, serializer.data)
 
@@ -86,7 +86,8 @@ class PropertySearch(APIView):
         if request.user.userprofile.custom_group.label == 'Admin':
             properties = Property.objects.all()
         else:
-            properties = Property.objects.filter(negociator=request.user.negociator)
+            negociator = Negociator.objects.get(user=request.user)
+            properties = Property.objects.filter(negociator=negociator)
         if 'email' in request.data:
             properties = properties.filter(email=request.data['email'])
         if 'phone' in request.data:
