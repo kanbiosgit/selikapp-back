@@ -37,13 +37,13 @@ class UserLoginView(RetrieveAPIView):
                 'status code': status.HTTP_400_BAD_REQUEST,
                 'message': 'user not found'
             }
-            return respond(status.HTTP_400_BAD_REQUEST, error='user not found')
+            return respond(status.HTTP_400_BAD_REQUEST, errors='user not found')
         else:
             try:
                 refresh = RefreshToken.for_user(user)
                 update_last_login(None, user)
             except AAUser.DoesNotExist:
-                return respond(status.HTTP_400_BAD_REQUEST, error="User with given email and password does not exists")
+                return respond(status.HTTP_400_BAD_REQUEST, errors="User with given email and password does not exists")
             response = {
                 'message': 'User logged in  successfully',
                 'access_token': str(refresh.access_token),
