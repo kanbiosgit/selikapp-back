@@ -126,7 +126,7 @@ class PropertyList(APIView):
             negociator = get_object_or_404(Negociator, user=request.user)
             serializer.save(negociator=negociator)
             return respond(data=serializer.data, response_status=status.HTTP_201_CREATED)
-        return respond(error=serializer.errors, response_status=status.HTTP_400_BAD_REQUEST)
+        return respond(errors=serializer.errors, response_status=status.HTTP_400_BAD_REQUEST)
 
 
 class PropertyDetail(APIView):

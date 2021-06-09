@@ -4,8 +4,30 @@ from rest_framework import serializers
 class PropertyIncomeSerializer(serializers.ModelSerializer) :
   class Meta :
     model = Property
-    fields = ['name', 'phone', 'address', 'price', 'ground', 'ref', 'prospecting', 'firstname', 'lastname', 'address', 'endDate', 'email', 'support', 'lat', 'lng']
-
+    fields = ['name', 'phone', 'price', 'ground', 'ref', 'prospecting', 'firstname', 'lastname', 'address', 'endDate', 'email', 'support', 'lat', 'lng']
+    extra_kwargs = {
+      'name': {
+        'allow_blank': True,
+      },
+      'phone': {
+        'allow_blank': True,
+      },
+      'ref': {
+        'allow_blank': True,
+      },
+      'firstname': {
+        'allow_blank': True,
+      },
+      'lastname': {
+        'allow_blank': True,
+      },
+      'email': {
+        'allow_blank': True,
+      },
+      'support': {
+        'allow_blank': True,
+      }
+    }
 
 class PropertySearchIncomeSerializer(serializers.Serializer):
     id = serializers.IntegerField(default=0)
