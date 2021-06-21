@@ -87,6 +87,7 @@ INSTALLED_APPS = [
     'userprofile',
     'prospecting',
     'property',
+    'influencer',
     'anymail',
     'django_extensions',
 ]
@@ -188,4 +189,4 @@ EMAIL_BACKEND = "anymail.backends.mailjet.EmailBackend"  # or sendgrid.EmailBack
 DEFAULT_FROM_EMAIL = "contactselika33@orange.fr"  # if you don't already have this in settings
 DEFAULT_TO_EMAIL = ["contactselika33@orange.fr"]
 
-FRONT_URL = 'http://localhost:8080/'
+FRONT_URL = 'https://selikapp.kanbios.fr/'
