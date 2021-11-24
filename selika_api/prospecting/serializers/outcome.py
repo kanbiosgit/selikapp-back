@@ -24,7 +24,6 @@ class RouteOutcomeSerializer(serializers.ModelSerializer):
 
 
 class RouteOutcomeFromNegoSerializer(serializers.ModelSerializer):
-    map = MapOutcomeSerializer(required=False)
 
     class Meta:
         model = Route
