@@ -27,6 +27,7 @@ class Map(models.Model) :
 class Route(models.Model):
   negociator = models.ForeignKey(
     Negociator,
+    related_name="routes",
     on_delete=CASCADE
   )
   map = models.ForeignKey(
