@@ -83,10 +83,16 @@ class PropertySearch(APIView):
   
     def post(self, request):
         if request.user.userprofile.custom_group.label == 'Admin':
-            properties = Property.objects.all()
+            if request.data['status'] == 'inprogress':
+                properties = Property.objects.exclude(prospecting=False).exclude(endDate__lte=date.today())
+            else:
+                properties = Property.objects.exclude(prospecting=True).exclude(endDate__gt=date.today())
         else:
             negociator = Negociator.objects.get(user=request.user)
-            properties = Property.objects.filter(negociator=negociator)
+            if request.data['status'] == 'inprogress':
+                properties = Property.objects.filter(negociator=negociator).exclude(prospecting=False).exclude(endDate__lte=date.today())
+            else:
+                properties = Property.objects.filter(negociator=negociator).exclude(prospecting=True).exclude(endDate__gt=date.today())
         if 'email' in request.data:
             properties = properties.filter(email=request.data['email'])
         if 'phone' in request.data:
@@ -115,7 +121,7 @@ class PropertyList(APIView):
     """
 
     def get(self, request, format=None):
-        properties = Property.objects.all()
+        properties = Property.objects.exclude(prospecting=False).exclude(endDate__lt=date.today())
         serializer = PropertyOutcomeSerializer(properties, many=True)
         return respond(status.HTTP_200_OK, serializer.data)
 
